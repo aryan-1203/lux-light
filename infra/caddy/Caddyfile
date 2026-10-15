@@ -1,0 +1,30 @@
+# Caddy TLS terminator for production (docker-compose.prod.yml). Obtains and renews Let's Encrypt
+# certificates for $SITE_DOMAIN automatically and forwards everything to the nginx frontend
+# container, which serves the SPA and proxies /api, /media, /sitemap.xml, /robots.txt to FastAPI.
+{
+	email {$ACME_EMAIL}
+	# Do not let anyone reach the admin API from outside the container.
+	admin off
+}
+
+# Redirect the apex (or www) twin to the canonical host. Adjust if your canonical host is the apex.
+# www.example.in → example.in:   example.in { … }   www.example.in { redir https://example.in{uri} permanent }
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# Caddy sets X-Forwarded-For (client IP) and X-Forwarded-Proto=https; nginx trusts only the
+	# private docker network (set_real_ip_from) and overwrites X-Forwarded-For for the API.
+	reverse_proxy frontend:80 {
+		health_uri /healthz
+		health_interval 30s
+	}
+
+	# No Caddy access log on purpose: nginx logs paths without query strings (order-tracking tokens
+	# travel in URLs). If you enable `log`, add a `format filter` that deletes request>uri query.
+}

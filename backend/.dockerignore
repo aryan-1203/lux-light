@@ -1,0 +1,20 @@
+# Keep the build context small and secret-free: only requirements, alembic, scripts and app/ are copied.
+**/__pycache__
+**/*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+storage/
+tests/
+*.log
+.DS_Store
+Dockerfile
+.dockerignore
