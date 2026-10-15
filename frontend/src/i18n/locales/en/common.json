@@ -1,0 +1,154 @@
+{
+  "status": {
+    "loading": "Loading…",
+    "loadingPage": "Loading page…",
+    "saving": "Saving…"
+  },
+  "actions": {
+    "close": "Close",
+    "dismiss": "Dismiss notification",
+    "retry": "Try again",
+    "backHome": "Back to home",
+    "shopLamps": "Shop lamps",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "learnMore": "Learn more"
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "notifications": "Notifications",
+    "navigatedTo": "Navigated to {{title}}"
+  },
+  "header": {
+    "homeLabel": "{{brand}} home",
+    "account": "My account",
+    "login": "Log in",
+    "openMenu": "Open menu",
+    "cartLabel_one": "Cart, {{count}} item",
+    "cartLabel_other": "Cart, {{count}} items"
+  },
+  "nav": {
+    "primary": "Primary",
+    "menu": "Menu",
+    "shop": "Shop",
+    "science": "Science",
+    "quiz": "Find your routine",
+    "blog": "Blog",
+    "track": "Track order",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "footer": {
+    "navLabel": "Footer",
+    "shop": "Shop",
+    "allLamps": "All lamps",
+    "deskLamps": "Desk lamps",
+    "panels": "Light panels",
+    "portable": "Portable",
+    "learn": "Learn",
+    "support": "Support",
+    "legal": "Legal",
+    "shippingPolicy": "Shipping policy",
+    "refundPolicy": "Returns & refunds",
+    "privacyPolicy": "Privacy policy",
+    "terms": "Terms of service",
+    "complianceTitle": "Import & compliance",
+    "compliance": {
+      "importer": "Importer",
+      "address": "Importer address",
+      "iec": "Import Export Code",
+      "bis": "BIS registration",
+      "gstin": "GSTIN",
+      "origin": "Country of origin"
+    },
+    "paymentsTitle": "Secure payments",
+    "payments": {
+      "upi": "UPI",
+      "cards": "Cards & EMI",
+      "netbanking": "Net banking",
+      "wallets": "Wallets",
+      "cod": "Cash on delivery"
+    },
+    "social": "Social media",
+    "copyright": "© {{year}} {{brand}}. All rights reserved."
+  },
+  "price": {
+    "from": "From",
+    "current": "Now",
+    "original": "Originally",
+    "save": "Save {{amount}}"
+  },
+  "rating": {
+    "label": "Rated {{value}} out of 5",
+    "labelWithCount_one": "Rated {{value}} out of 5 from {{formattedCount}} review",
+    "labelWithCount_other": "Rated {{value}} out of 5 from {{formattedCount}} reviews",
+    "stars_one": "{{count}} star",
+    "stars_other": "{{count}} stars"
+  },
+  "stock": {
+    "in_stock": "In stock",
+    "low_stock": "Only a few left",
+    "out_of_stock": "Out of stock"
+  },
+  "cart": {
+    "title": "Your cart",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
+    "empty": "Your cart is empty",
+    "emptyHint": "Find the lamp that fits your mornings.",
+    "loadError": "We couldn't load your cart.",
+    "subtotal": "Subtotal",
+    "taxNote": "Prices include GST. Shipping and discounts are calculated at checkout.",
+    "freeShippingRemaining": "Add {{amount}} more for free shipping.",
+    "freeShippingUnlocked": "You've unlocked free shipping.",
+    "checkout": "Checkout",
+    "viewCart": "View cart",
+    "quantityFor": "Quantity for {{name}}",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "remove": "Remove {{name}}"
+  },
+  "viewer": {
+    "illustrationAlt": "Illustration of {{name}}",
+    "turnOn": "Turn it on",
+    "turnOff": "Turn it off",
+    "colourTemperature": "Colour temperature"
+  },
+  "trust": {
+    "label": "Our promise",
+    "returns": "{{days}}-day returns",
+    "warranty": "{{months}}-month warranty",
+    "freeShipping": "Free shipping over {{amount}}",
+    "securePayments": "Secure UPI, card & COD payments"
+  },
+  "pageStub": {
+    "eyebrow": "Coming soon",
+    "description": "The {{name}} page is being crafted. Check back shortly."
+  },
+  "forbidden": {
+    "title": "You don't have access to this page",
+    "description": "This area is for store staff. If you think this is a mistake, contact support."
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "This part of the page didn't load. Try again, or head back home."
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "description": "The link may be broken or the page may have moved. Let's get you back to the light."
+  },
+  "form": {
+    "required": "Required",
+    "optional": "Optional",
+    "errorSummary_one": "There is {{count}} problem with this form",
+    "errorSummary_other": "There are {{count}} problems with this form"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी"
+  }
+}
