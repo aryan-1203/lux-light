@@ -27,6 +27,7 @@ import { cn } from "@/lib/cn";
 import { whatsappHref } from "@/lib/format";
 import { CheckboxField, ChipGroup, RadioCards, SelectField, TextField } from "./fields";
 import { SuccessState } from "./SuccessState";
+import { warmApi } from "@/lib/api";
 import { submitLead } from "./submitLead";
 
 const TURNSTILE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -50,7 +51,11 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
   const [turnstileKey, setTurnstileKey] = useState(0);
   const started = useRef(false);
 
-  useEffect(() => captureFirstTouch(), []);
+  useEffect(() => {
+    captureFirstTouch();
+    // The form loads as it nears the viewport, so this wakes a sleeping API well before submit.
+    warmApi();
+  }, []);
 
   const schema = variant === "full" ? fullLeadSchema : shortLeadSchema;
   const {

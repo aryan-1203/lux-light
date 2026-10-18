@@ -110,6 +110,14 @@ paid plan, and the disk is what guarantees no submission is lost if Google Sheet
    `{"status":"ok","sheets_configured":true,"outbox_pending":0}`.
 5. Keep it at **one instance**. The rate limiter, duplicate check and outbox live in that one process and disk.
 
+**Free plan, no card (manual web service instead of the Blueprint):** Render → **New → Web Service** → pick the
+repo → Language **Docker**, Root Directory **`backend`**, Instance type **Free**, Health check path `/api/health`.
+Add the environment variables by hand: `APP_ENV=production`, `CORS_ORIGINS`, `GOOGLE_SERVICE_ACCOUNT_B64`,
+`LEADS_SHEET_ID`, `NEWSLETTER_SHEET_ID`, `TURNSTILE_SECRET`. Don't set `OUTBOX_PATH` (there's no disk). Trade-offs:
+the service sleeps after 15 idle minutes and takes ~30–60 s to wake (the site pings `/api/health` as soon as a form
+comes into view to hide this), and the outbox lives on an ephemeral filesystem, so a lead queued during a Sheets
+outage is lost if the service restarts before it's delivered (it's still in the logs).
+
 Without Render: the same `backend/Dockerfile` runs on Cloud Run or Railway. On Cloud Run the filesystem is
 ephemeral, so set min and max instances to 1 and accept that the outbox only survives while the instance lives.
 Every queued lead is also logged, so it can be recovered from logs. See PLAN.md (R1).

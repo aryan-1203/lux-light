@@ -3,7 +3,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { apiUrl } from "@/lib/api";
+import { apiUrl, warmApi } from "@/lib/api";
 
 type Status = "idle" | "submitting" | "done" | "error";
 
@@ -50,6 +50,7 @@ export function NewsletterForm() {
       </label>
       <div className="relative mt-3 flex max-w-sm items-center">
         <input
+          onFocus={warmApi}
           id={`${id}-email`}
           name="email"
           type="email"
