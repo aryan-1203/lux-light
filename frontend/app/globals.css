@@ -1,0 +1,395 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "lenis/dist/lenis.css";
+
+/* Hover only on devices with a real pointer (no sticky hover after a tap). */
+@custom-variant hover-fine {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
+@theme inline {
+  /* Colour */
+  --color-paper: var(--paper);
+  --color-linen: var(--linen);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline: var(--hairline);
+  --color-line-strong: var(--line-strong);
+  --color-sun-50: var(--sun-50);
+  --color-sun-200: var(--sun-200);
+  --color-sun-400: var(--sun-400);
+  --color-sun-600: var(--sun-600);
+  --color-sun-800: var(--sun-800);
+  --color-dawn-rose: var(--dawn-rose);
+  --color-sky-mist: var(--sky-mist);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  /* Families (next/font variables set on <html>) */
+  --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display-italic: var(--font-newsreader-italic), var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-deva: var(--font-tiro-deva), serif;
+
+  /* Fluid type scale (360 → 1440px). DESIGN.md §3.1 */
+  --text-display-xl: clamp(2.75rem, 1.55rem + 5.3vw, 6.25rem);
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.04em;
+  --text-display-l: clamp(2.25rem, 1.45rem + 3.5vw, 4.5rem);
+  --text-display-l--line-height: 1.04;
+  --text-display-l--letter-spacing: -0.035em;
+  --text-display-m: clamp(1.875rem, 1.4rem + 2.1vw, 3.25rem);
+  --text-display-m--line-height: 1.08;
+  --text-display-m--letter-spacing: -0.03em;
+  --text-heading: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.02em;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.3;
+  --text-title--letter-spacing: -0.01em;
+  --text-body-l: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-body-l--line-height: 1.55;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.55;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.08em;
+  --text-numeral-xl: clamp(3.5rem, 2rem + 6.5vw, 8rem);
+  --text-numeral-xl--line-height: 0.95;
+  --text-numeral-xl--letter-spacing: -0.04em;
+
+  /* Radii */
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-card: var(--r-card);
+  --radius-pill: var(--r-pill);
+
+  /* Shadows */
+  --shadow-lift: var(--lift);
+}
+
+/* Emitted as real CSS variables too, so plain CSS can use var(--ease-out). */
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --breakpoint-3xl: 120rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--nav-h) + 16px);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Emotional accent words in display type use the (lazily loaded) italic cut. */
+  :is(h1, h2, h3, .font-display) :is(em, i) {
+    font-family: var(--font-display-italic);
+    font-style: italic;
+  }
+
+  ::selection {
+    background: var(--sun-200);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Buttons and links never show text-selection on long-press */
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  input,
+  select,
+  textarea {
+    /* ≥16px stops iOS zooming into focused fields */
+    font-size: max(16px, 1rem);
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+  }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: calc(var(--container) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  }
+
+  .section-y {
+    padding-block: var(--section-y);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--sun-800);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Static grain for warm sections. Never animated. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--grain);
+    background-size: 160px 160px;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  /* Hero stage layout. Static per breakpoint; motion only drives transforms. DESIGN.md §7 */
+  .hero-stage {
+    --lamp-x: 50%;
+    --horizon-y: 56%;
+    --panel-h: clamp(180px, 30svh, 330px);
+    --panel-w: calc(var(--panel-h) * 0.75);
+    --sun-d: calc(var(--panel-h) * 0.32);
+    /* Settle scene: lamp steps aside (in panel widths) and shrinks */
+    --s5-shift-n: -0.5;
+    --s5-scale: 0.55;
+  }
+  @media (min-width: 768px) {
+    .hero-stage {
+      --s5-shift-n: -0.7;
+      --s5-scale: 0.6;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero-stage {
+      --lamp-x: 66%;
+      --horizon-y: 58%;
+      --panel-h: clamp(300px, 52svh, 600px);
+      --s5-shift-n: -0.15;
+      --s5-scale: 0.56;
+    }
+  }
+
+  /* Colour-temperature slider (Try the light) */
+  .kelvin-range {
+    appearance: none;
+    height: 44px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .kelvin-range::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ffc98a, #fff3dc 40%, #f4f7ff 60%, #cfdcf7);
+    box-shadow: inset 0 0 0 1px rgb(28 27 25 / 0.08);
+  }
+  .kelvin-range::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ffc98a, #fff3dc 40%, #f4f7ff 60%, #cfdcf7);
+  }
+  .kelvin-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    margin-top: -9px;
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px rgb(28 27 25 / 0.2),
+      0 4px 12px -2px rgb(28 27 25 / 0.25);
+    transition: scale var(--dur-press) var(--ease-out);
+  }
+  .kelvin-range:active::-webkit-slider-thumb {
+    scale: 0.94;
+  }
+  .kelvin-range::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px rgb(28 27 25 / 0.2),
+      0 4px 12px -2px rgb(28 27 25 / 0.25);
+  }
+  .kelvin-range:focus-visible {
+    outline: none;
+  }
+  .kelvin-range:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--ink);
+  }
+  .kelvin-range:focus-visible::-moz-range-thumb {
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--ink);
+  }
+
+  /* Long-form content (journal, legal, inner pages) */
+  .prose {
+    max-width: 680px;
+    font-size: var(--text-body-l);
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .prose > * + * {
+    margin-top: 1.1em;
+  }
+  .prose h2 {
+    margin-top: 2.2em;
+    font-size: var(--text-heading);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .prose h3 {
+    margin-top: 1.8em;
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .prose h2 + *,
+  .prose h3 + * {
+    margin-top: 0.6em;
+  }
+  .prose p,
+  .prose li {
+    color: color-mix(in oklab, var(--ink) 88%, var(--paper));
+  }
+  .prose a {
+    text-decoration: underline;
+    text-decoration-color: var(--sun-600);
+    text-underline-offset: 3px;
+    transition: color var(--dur-micro) ease;
+  }
+  .prose a:hover {
+    color: var(--sun-800);
+  }
+  .prose strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 1.25em;
+  }
+  .prose ul {
+    list-style: disc;
+  }
+  .prose ol {
+    list-style: decimal;
+  }
+  .prose li + li {
+    margin-top: 0.4em;
+  }
+  .prose li::marker {
+    color: var(--sun-600);
+  }
+  .prose blockquote {
+    border-left: 2px solid var(--sun-400);
+    padding-left: 1.25em;
+    font-family: var(--font-display);
+    font-size: 1.35em;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .prose hr {
+    border-color: var(--hairline);
+    margin-block: 2.5em;
+  }
+
+  .prose-measure {
+    max-width: 65ch;
+  }
+}
+
+/* One-shot reveals (components/ui/Reveal.tsx) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s),
+    transform var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s);
+}
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transform: none;
+    transition: opacity var(--dur-ui) var(--ease-out);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 8px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}

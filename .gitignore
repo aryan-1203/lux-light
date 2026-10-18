@@ -19,3 +19,8 @@ test-results/
 backend/storage/
 *.log
 .DS_Store
+# frontend
+frontend/.next/
+frontend/.velite/
+# backend runtime data (outbox)
+backend/data/

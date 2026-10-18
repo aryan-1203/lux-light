@@ -1,21 +1,10 @@
-# Runtime dependencies (pinned). Python 3.12.
-fastapi==0.143.1
-starlette==1.8.0
+fastapi==0.143.5
 uvicorn[standard]==0.54.0
-SQLAlchemy==2.1.4
-alembic==1.20.0
-PyMySQL==1.2.3
-cryptography==50.0.2
 pydantic==2.14.1
 pydantic-settings==2.16.0
-email-validator==2.3.0
-PyJWT==2.15.1
-argon2-cffi==25.1.0
-python-multipart==0.0.32
+email-validator>=2.2
+gspread==6.2.1
+google-auth==2.62.0
+slowapi==0.1.10
 httpx==0.28.1
-redis==8.1.0
-reportlab==5.0.1
-Markdown==3.11.1
-nh3==0.3.7
-Jinja2==3.1.6
-pillow==12.3.0
+openpyxl==3.1.5

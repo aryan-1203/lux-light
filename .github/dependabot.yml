@@ -1,76 +1,17 @@
-# Weekly dependency updates. Minor/patch bumps are grouped per ecosystem to keep PR noise low;
-# majors arrive as individual PRs. CI must be green before merging (pins are exact on purpose).
 version: 2
 updates:
-  - package-ecosystem: pip
-    directory: /backend
-    schedule:
-      interval: weekly
-      day: monday
-      timezone: Asia/Kolkata
-    open-pull-requests-limit: 5
-    labels: [dependencies, backend]
-    commit-message:
-      prefix: build
-      include: scope
-    groups:
-      python-minor-patch:
-        update-types: [minor, patch]
-
   - package-ecosystem: npm
     directory: /frontend
     schedule:
       interval: weekly
-      day: monday
-      timezone: Asia/Kolkata
-    open-pull-requests-limit: 5
-    labels: [dependencies, frontend]
-    commit-message:
-      prefix: build
-      include: scope
     groups:
-      npm-minor-patch:
-        update-types: [minor, patch]
-    ignore:
-      # React 18 / Tailwind 3 / React Router 6 are fixed by the brief; review majors manually.
-      - dependency-name: react
-        update-types: [version-update:semver-major]
-      - dependency-name: react-dom
-        update-types: [version-update:semver-major]
-      - dependency-name: "@types/react"
-        update-types: [version-update:semver-major]
-      - dependency-name: "@types/react-dom"
-        update-types: [version-update:semver-major]
-      - dependency-name: tailwindcss
-        update-types: [version-update:semver-major]
-      - dependency-name: react-router-dom
-        update-types: [version-update:semver-major]
-
+      frontend:
+        patterns: ["*"]
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-      day: monday
-      timezone: Asia/Kolkata
-    labels: [dependencies, ci]
-    commit-message:
-      prefix: ci
-    groups:
-      actions:
-        patterns: ["*"]
-
-  - package-ecosystem: docker
-    directories: [/backend, /frontend]
-    schedule:
-      interval: weekly
-      day: monday
-      timezone: Asia/Kolkata
-    labels: [dependencies, docker]
-    commit-message:
-      prefix: build
-    ignore:
-      # Python 3.12 / Node 24 are fixed by the stack; take patch images only.
-      - dependency-name: python
-        update-types: [version-update:semver-major, version-update:semver-minor]
-      - dependency-name: node
-        update-types: [version-update:semver-major]
+      interval: monthly
