@@ -4,9 +4,9 @@ import { forwardRef, useId, type ComponentProps, type ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-/* Shared look: 52px tall, 16px text (no iOS zoom), visible label above, error below. */
+/* Shared look: 56px tall, 16px text (no iOS zoom), visible label above, error below. */
 const control =
-  "block h-[52px] w-full rounded-sm border bg-paper px-4 text-base text-ink placeholder:text-ink-muted/75 transition-[border-color,box-shadow] duration-[var(--dur-micro)] ease-[ease] focus-visible:border-ink focus-visible:shadow-[0_0_0_3px_rgb(28_27_25/0.08)] focus-visible:outline-none aria-[invalid=true]:border-danger";
+  "block h-14 w-full rounded-sm border border-line-strong/70 bg-bg-raise px-4 text-base text-fg placeholder:text-fg-muted/70 transition-[border-color,box-shadow] duration-[var(--dur-micro)] ease-[ease] focus-visible:border-[#f5a524] focus-visible:shadow-[0_0_0_4px_rgb(255_185_56/0.25)] focus-visible:outline-none aria-[invalid=true]:border-danger";
 
 type FieldShellProps = {
   id: string;
@@ -21,13 +21,13 @@ type FieldShellProps = {
 export function FieldShell({ id, label, error, hint, optional, children, className }: FieldShellProps) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-2 flex items-baseline justify-between gap-3 text-small font-medium text-ink">
+      <label htmlFor={id} className="mb-2 flex items-baseline justify-between gap-3 text-small font-medium text-fg">
         {label}
-        {optional && <span className="text-[0.8125rem] font-normal text-ink-muted">Optional</span>}
+        {optional && <span className="text-[0.8125rem] font-normal text-fg-muted">Optional</span>}
       </label>
       {children}
       {hint && !error && (
-        <p id={`${id}-hint`} className="mt-1.5 text-[0.8125rem] text-ink-muted">
+        <p id={`${id}-hint`} className="mt-1.5 text-[0.8125rem] text-fg-muted">
           {hint}
         </p>
       )}
@@ -62,7 +62,7 @@ export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextF
     <FieldShell id={id} label={label} error={error} hint={hint} optional={optional} className={className}>
       <div className="relative">
         {prefix && (
-          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center font-mono text-base text-ink-muted">
+          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center font-mono text-base text-fg-muted">
             {prefix}
           </span>
         )}
@@ -101,7 +101,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function S
           aria-invalid={error ? true : undefined}
           aria-describedby={`${id}-error`}
           defaultValue=""
-          className={cn(control, "cursor-pointer appearance-none pr-11 invalid:text-ink-muted")}
+          className={cn(control, "cursor-pointer appearance-none pr-11 invalid:text-fg-muted")}
           required
           {...rest}
         >
@@ -116,7 +116,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function S
         </select>
         <ChevronDown
           aria-hidden
-          className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-ink-muted"
+          className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-fg-muted"
         />
       </div>
     </FieldShell>
@@ -146,7 +146,7 @@ export function ChipGroup({
   const toggle = (v: string) => onChange(value.includes(v) ? value.filter((x) => x !== v) : [...value, v]);
   return (
     <fieldset aria-describedby={`${id}-error`} aria-invalid={error ? true : undefined}>
-      <legend className="mb-3 text-small font-medium text-ink">{legend}</legend>
+      <legend className="mb-3 text-small font-medium text-fg">{legend}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => {
           const checked = value.includes(o.value);
@@ -154,10 +154,10 @@ export function ChipGroup({
             <label
               key={o.value}
               className={cn(
-                "relative inline-flex h-11 cursor-pointer items-center gap-2 rounded-pill border px-4 text-small font-medium transition-[background-color,border-color,color,scale] duration-[var(--dur-micro)] ease-out select-none active:scale-[0.97] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink",
+                "relative inline-flex h-11 cursor-pointer items-center gap-2 rounded-pill border px-4 text-small font-medium transition-[background-color,border-color,color,scale] duration-[var(--dur-micro)] ease-out select-none active:scale-[0.97] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-fg",
                 checked
-                  ? "border-sun-600 bg-sun-50 text-ink"
-                  : "border-line-strong/45 bg-paper text-ink hover-fine:border-ink/50",
+                  ? "border-[#f5a524] bg-glow text-fg"
+                  : "border-line-strong/60 bg-bg-raise text-fg hover-fine:border-fg/50",
               )}
             >
               <input
@@ -171,7 +171,7 @@ export function ChipGroup({
                 aria-hidden
                 className={cn(
                   "grid size-4 place-items-center rounded-full border transition-[background-color,border-color] duration-[var(--dur-micro)]",
-                  checked ? "border-sun-600 bg-sun-600 text-paper" : "border-line-strong/60",
+                  checked ? "border-sun bg-sun text-fg" : "border-line-strong",
                 )}
               >
                 {checked && <Check className="size-3" strokeWidth={3} />}
@@ -208,7 +208,7 @@ export function RadioCards({
   const id = useId();
   return (
     <fieldset aria-describedby={`${id}-error`} aria-invalid={error ? true : undefined}>
-      <legend className="mb-3 text-small font-medium text-ink">{legend}</legend>
+      <legend className="mb-3 text-small font-medium text-fg">{legend}</legend>
       <div className={cn("grid gap-2", columns === 3 ? "grid-cols-3" : "grid-cols-2")}>
         {options.map((o) => {
           const checked = value === o.value;
@@ -216,10 +216,10 @@ export function RadioCards({
             <label
               key={o.value}
               className={cn(
-                "flex min-h-[52px] cursor-pointer items-center justify-center rounded-sm border px-3 text-center text-small font-medium transition-[background-color,border-color,scale] duration-[var(--dur-micro)] ease-out select-none active:scale-[0.98] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink",
+                "flex min-h-[52px] cursor-pointer items-center justify-center rounded-sm border px-3 text-center text-small font-medium transition-[background-color,border-color,scale] duration-[var(--dur-micro)] ease-out select-none active:scale-[0.98] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-fg",
                 checked
-                  ? "border-ink bg-ink text-paper"
-                  : "border-line-strong/45 bg-paper text-ink hover-fine:border-ink/50",
+                  ? "border-[#f5a524] bg-glow text-fg"
+                  : "border-line-strong/60 bg-bg-raise text-fg hover-fine:border-fg",
               )}
             >
               <input
@@ -250,7 +250,7 @@ export const CheckboxField = forwardRef<HTMLInputElement, CheckboxProps>(functio
   const id = useId();
   return (
     <div className={className}>
-      <label htmlFor={id} className="group flex cursor-pointer items-start gap-3 text-small text-ink">
+      <label htmlFor={id} className="group flex cursor-pointer items-start gap-3 text-small text-fg">
         <span className="relative mt-0.5 grid size-5 shrink-0 place-items-center">
           <input
             ref={ref}
@@ -258,12 +258,12 @@ export const CheckboxField = forwardRef<HTMLInputElement, CheckboxProps>(functio
             type="checkbox"
             aria-invalid={error ? true : undefined}
             aria-describedby={`${id}-error`}
-            className="peer size-5 cursor-pointer appearance-none rounded-[6px] border border-line-strong/80 bg-paper transition-[background-color,border-color] duration-[var(--dur-micro)] checked:border-ink checked:bg-ink aria-[invalid=true]:border-danger"
+            className="peer size-5 cursor-pointer appearance-none rounded-[6px] border border-line-strong bg-bg-raise transition-[background-color,border-color] duration-[var(--dur-micro)] checked:border-accent-fg checked:bg-accent-fg aria-[invalid=true]:border-danger"
             {...rest}
           />
           <Check
             aria-hidden
-            className="pointer-events-none absolute size-3.5 text-paper opacity-0 transition-opacity duration-[var(--dur-micro)] peer-checked:opacity-100"
+            className="pointer-events-none absolute size-3.5 text-bg opacity-0 transition-opacity duration-[var(--dur-micro)] peer-checked:opacity-100"
             strokeWidth={3}
           />
         </span>

@@ -1,161 +1,101 @@
-"use client";
+import type { CSSProperties } from "react";
+import Image from "next/image";
+import { ArrowDown, Check } from "lucide-react";
+import { joinHref, siteConfig } from "@/site.config";
+import { lux } from "@/data/specs";
+import { formatNumber } from "@/lib/format";
+import { Button } from "@/components/ui/Button";
 
-import { useEffect, useRef, useState, type ComponentType } from "react";
-import { canUseWebGLHero, isWebGLForced, whenIdle } from "./capability";
-import type { StageLayout } from "./LampScene";
-import { HeroStage2D } from "./HeroStage2D";
-import { HeroStatic } from "./HeroStatic";
-import { LuxCounter } from "./LuxCounter";
-import { LuxMeter } from "./LuxMeter";
-import { SceneCopy } from "./SceneCopy";
-import { SkyLayers } from "./SkyLayers";
-import { useHeroProgress } from "./useHeroProgress";
+const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
-/**
- * "The horizon was a lamp": a pinned, scroll-scrubbed story (≈400svh desktop, 250svh mobile).
- * All copy is server-rendered DOM text; the first headline is the LCP element and never waits
- * for JS or WebGL. Under prefers-reduced-motion a static, un-pinned version is shown instead.
- */
+/** Full-screen hero. The lamp is the light source of the page: a warm glow spreads from its panel. */
 export function Hero() {
   return (
-    <>
-      <div className="motion-reduce:hidden">
-        <HeroScroll />
-      </div>
-      <div className="hidden motion-reduce:block">
-        <HeroStatic />
-      </div>
-      <div id="after-hero" tabIndex={-1} className="outline-none" />
-    </>
-  );
-}
-
-type SceneComponent = ComponentType<{
-  progress: ReturnType<typeof useHeroProgress>;
-  layout: React.RefObject<StageLayout>;
-  onReady: () => void;
-  onFail: () => void;
-  governor?: boolean;
-}>;
-
-function HeroScroll() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const progress = useHeroProgress(sectionRef);
-  const layout = useStageLayout(stageRef);
-  const [Scene, setScene] = useState<SceneComponent | null>(null);
-  const [webglReady, setWebglReady] = useState(false);
-
-  // The one Devanagari word appears in scene 2; fetch its font while the visitor reads scene 1.
-  useEffect(
-    () =>
-      whenIdle(() => {
-        const family = getComputedStyle(document.documentElement).getPropertyValue("--font-tiro-deva").trim();
-        if (family) document.fonts.load(`400 1em ${family}`, "सुप्रभात").catch(() => {});
-      }, 3000),
-    [],
-  );
-
-  // Progressive enhancement: load the WebGL scene only on capable devices, once the page is idle.
-  useEffect(() => {
-    if (!canUseWebGLHero()) return;
-    return whenIdle(() => {
-      import("./LampScene").then((m) => setScene(() => m.default)).catch(() => setScene(null));
-    });
-  }, []);
-
-  return (
     <section
-      ref={sectionRef}
-      aria-label="Introduction"
-      className="hero-stage relative -mt-[var(--nav-h)] h-[200svh] lg:h-[300svh]"
+      id="top"
+      aria-labelledby="hero-title"
+      className="relative isolate overflow-hidden bg-bg lg:min-h-[max(680px,100svh)]"
     >
-      <a
-        href="#after-hero"
-        className="sr-only z-30 rounded-pill bg-ink px-5 py-3 text-[0.9375rem] font-semibold text-paper focus:not-sr-only focus:absolute focus:top-[calc(var(--nav-h)+12px)] focus:left-[var(--gutter)]"
-      >
-        Skip intro
-      </a>
+      {/* Light from the lamp, spreading over the page */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-[44%] left-1/2 -z-10 size-[150vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,#fff3d6,rgb(255_222_170/0.65)_35%,rgb(255_200_150/0.25)_60%,transparent_75%)] lg:top-1/2 lg:left-[72%] lg:size-[110vw]"
+      />
 
-      <div ref={stageRef} className="sticky top-0 h-[100svh] overflow-hidden">
-        <div
-          data-hero-probe
-          aria-hidden
-          className="pointer-events-none invisible absolute top-[var(--horizon-y)] left-[var(--lamp-x)] h-[var(--panel-h)] w-px"
-        />
-        <SkyLayers progress={progress} />
-        {Scene && (
-          <div
-            className="absolute inset-0 transition-opacity duration-[600ms] ease-out"
-            style={{ opacity: webglReady ? 1 : 0 }}
+      <div className="container-x grid items-center gap-x-10 gap-y-4 pt-[calc(var(--nav-h)+env(safe-area-inset-top)+8px)] pb-12 lg:min-h-[max(680px,100svh)] lg:grid-cols-[1.05fr_1fr] lg:pt-[var(--nav-h)] lg:pb-0">
+        <div className="relative z-10 max-w-[600px]">
+          <p data-hero-in="" style={i(0)} className="kicker inline-flex items-center gap-2">
+            <span aria-hidden className="size-2 rounded-full bg-sun shadow-[0_0_0_4px_rgb(255_185_56/0.25)]" />
+            Waitlist open · Founding batch
+          </p>
+          <h1 id="hero-title" data-hero-in="" style={i(1)} className="mt-5 text-hero">
+            <span className="text-sunrise">Sunrise,</span>
+            <br />
+            on your desk.
+          </h1>
+          <p data-hero-in="" style={i(2)} className="mt-6 max-w-[48ch] text-body-l text-fg-muted">
+            Indoor light is a fraction of a morning outside. {siteConfig.brandName} is a {formatNumber(lux.peak.value)}
+            -lux, UV-filtered light panel for foggy winters, monsoon skies and long days indoors. Thirty minutes with
+            your chai.
+          </p>
+          <div data-hero-in="" style={i(3)} className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Button href={joinHref} size="lg">
+              Join the waitlist
+            </Button>
+            <Button href="#why" variant="ghost" size="lg">
+              Why 10,000 lux? <ArrowDown aria-hidden className="size-4" strokeWidth={1.75} />
+            </Button>
+          </div>
+          <ul
+            data-hero-in=""
+            style={i(4)}
+            className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-small text-fg-muted"
+            aria-label="About the waitlist"
           >
-            <Scene
-              progress={progress}
-              layout={layout}
-              onReady={() => setWebglReady(true)}
-              onFail={() => {
-                setWebglReady(false);
-                setScene(null);
-              }}
-              governor={!isWebGLForced()}
+            {["Free to join", "No payment now", `First ${formatNumber(siteConfig.launchBatchSize)} lamps`].map((t) => (
+              <li key={t} className="inline-flex items-center gap-1.5">
+                <Check aria-hidden className="size-4 text-accent-fg" strokeWidth={2} />
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* The lamp. Phones: above the headline and small enough that the whole pitch fits one screen. */}
+        <div className="relative order-first mx-auto w-[min(58vw,calc(33svh*0.68),300px)] lg:order-none lg:w-full lg:max-w-[520px]">
+          <div className="relative aspect-[600/880]">
+            {/* Halo around the lit panel */}
+            <div
+              aria-hidden
+              className="absolute top-[10%] right-[4%] left-[6%] h-[50%] rotate-[-4deg] rounded-[18%] bg-[#ffd98a] opacity-80 blur-[40px]"
+            />
+            <Image
+              src="/renders/lamp-cutout.png"
+              alt={`The ${siteConfig.brandName} lamp: a large glowing panel on a curved arm and a white base.`}
+              fill
+              priority
+              sizes="(min-width: 1024px) 520px, 300px"
+              className="object-contain"
             />
           </div>
-        )}
-        <HeroStage2D progress={progress} webgl={webglReady} />
-
-        <div className="container-x relative z-10 h-full">
-          <div className="absolute top-[calc(var(--nav-h)+28px)] right-[calc(var(--gutter)+14px)] bottom-0 left-[var(--gutter)] lg:top-[26svh] lg:right-auto lg:w-[46%] lg:max-w-[600px]">
-            <SceneCopy progress={progress} />
+          {/* Meter */}
+          <div className="absolute right-[76%] bottom-[26%] flex items-center gap-2 rounded-pill bg-bg-raise/90 py-1.5 pr-3 pl-1.5 whitespace-nowrap shadow-soft backdrop-blur lg:right-[-4%] lg:bottom-[4%] lg:gap-3 lg:py-2 lg:pr-4 lg:pl-2">
+            <span aria-hidden className="grid size-7 place-items-center rounded-full bg-glow text-accent-fg lg:size-8">
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+              </svg>
+            </span>
+            <span className="leading-tight">
+              <span className="flex items-baseline gap-1.5 text-[1.0625rem] font-medium tabular lg:text-title">
+                {formatNumber(lux.peak.value)}
+                <span className="text-small font-normal text-fg-muted">lux</span>
+              </span>
+              <span className="hidden text-[0.75rem] text-fg-muted lg:block">at {lux.measuredAtCm.value} cm from the panel</span>
+            </span>
           </div>
-        </div>
-
-        {/* Phones/tablets: centred just under the lamp, always above the fold. Desktop: top-right corner. */}
-        <div className="absolute inset-x-[var(--gutter)] top-[calc(var(--horizon-y)+var(--panel-h)/2+20px)] z-10 flex justify-center text-center lg:inset-x-auto lg:top-[calc(var(--nav-h)+32px)] lg:right-[calc(var(--gutter)+40px)] lg:block lg:text-right">
-          <LuxCounter progress={progress} />
-        </div>
-
-        <div className="absolute top-1/2 right-[max(10px,env(safe-area-inset-right))] z-10 -translate-y-1/2 lg:right-6">
-          <LuxMeter progress={progress} />
         </div>
       </div>
     </section>
   );
-}
-
-/** Reads the stage's CSS-variable layout in px (shared with the WebGL scene). */
-function useStageLayout(stageRef: React.RefObject<HTMLDivElement | null>) {
-  const layout = useRef<StageLayout>({
-    width: 1440,
-    height: 900,
-    lampX: 950,
-    horizonY: 522,
-    panelH: 468,
-    s5ShiftN: -0.15,
-    s5Scale: 0.56,
-  });
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const probe = stage.querySelector<HTMLElement>("[data-hero-probe]");
-    const measure = () => {
-      if (!probe) return;
-      const cs = getComputedStyle(stage);
-      layout.current = {
-        width: stage.clientWidth,
-        height: stage.clientHeight,
-        lampX: probe.offsetLeft,
-        horizonY: probe.offsetTop,
-        panelH: probe.offsetHeight,
-        s5ShiftN: parseFloat(cs.getPropertyValue("--s5-shift-n")) || 0,
-        s5Scale: parseFloat(cs.getPropertyValue("--s5-scale")) || 0.6,
-      };
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(stage);
-    return () => ro.disconnect();
-  }, [stageRef]);
-
-  return layout;
 }

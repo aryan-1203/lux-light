@@ -5,9 +5,9 @@
 
 export const siteConfig = {
   brandName: "Brand",
-  tagline: "Sunrise, on demand.",
+  tagline: "Sunrise, on your desk.",
   description:
-    "A 10,000 lux, UV-free light lamp designed for Indian mornings. Bring the morning indoors. Join early access.",
+    "A 10,000-lux, UV-filtered light panel for Indian mornings. Thirty minutes with your chai. Join the waitlist for the founding batch.",
 
   /** Production origin, used for metadata, sitemap and OG URLs. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
@@ -55,29 +55,16 @@ export const siteConfig = {
 
 export type SiteConfig = typeof siteConfig;
 
+/** Sections of the one-page site. Hrefs are absolute so they also work from /privacy and /terms. */
 export const navLinks = [
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/the-lamp", label: "The lamp" },
-  { href: "/why-india", label: "Why India" },
-  { href: "/journal", label: "Journal" },
-  { href: "/faq", label: "FAQ" },
+  { id: "why", href: "/#why", label: "Why light" },
+  { id: "research", href: "/#research", label: "Research" },
+  { id: "faq", href: "/#faq", label: "FAQ" },
 ] as const;
 
-export const footerLinks = {
-  Product: [
-    { href: "/the-lamp", label: "The lamp" },
-    { href: "/how-it-works", label: "How it works" },
-    { href: "/early-access", label: "Early access" },
-    { href: "/faq", label: "FAQ" },
-  ],
-  Learn: [
-    { href: "/why-india", label: "Why India" },
-    { href: "/journal", label: "Journal" },
-    { href: "/stories", label: "Stories" },
-  ],
-  Company: [
-    { href: "/about", label: "About" },
-    { href: "/privacy", label: "Privacy" },
-    { href: "/terms", label: "Terms" },
-  ],
-} as const;
+export const joinHref = "/#join";
+
+export const legalLinks = [
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+] as const;

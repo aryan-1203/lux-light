@@ -22,36 +22,16 @@ export function productLd() {
     name: `${siteConfig.brandName} 10,000 lux light lamp`,
     description: siteConfig.description,
     brand: { "@type": "Brand", name: siteConfig.brandName },
-    url: abs("/the-lamp"),
+    url: abs("/#lamp"),
     image: abs("/opengraph-image"),
     offers: {
       "@type": "Offer",
       priceCurrency: "INR",
       price: siteConfig.priceDisplay,
       availability: "https://schema.org/PreOrder",
-      url: abs("/early-access"),
+      url: abs("/#join"),
       areaServed: "IN",
     },
-  };
-}
-
-export function articleLd(post: { title: string; excerpt: string; date: string; url: string; cover: string }) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.date,
-    dateModified: post.date,
-    image: abs(post.cover),
-    mainEntityOfPage: abs(post.url),
-    author: { "@type": "Organization", name: siteConfig.brandName },
-    publisher: {
-      "@type": "Organization",
-      name: siteConfig.brandName,
-      logo: { "@type": "ImageObject", url: abs("/icon.svg") },
-    },
-    inLanguage: "en-IN",
   };
 }
 

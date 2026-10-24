@@ -1,72 +1,68 @@
 /*
- * Design tokens. Source of truth: DESIGN.md §2–§6.
- * Raw values live here; Tailwind utilities are mapped from them in app/globals.css (@theme inline).
+ * Design tokens: "First light". One bright theme: warm white paper, sunrise accents
+ * (sun → apricot → peach) and soft ink for text. No dark surfaces anywhere.
+ * Components use the semantic names (bg, fg, line, accent …) through Tailwind, never raw hex.
  */
 
 :root {
   color-scheme: light;
 
-  /* Neutrals */
-  --paper: #fbf8f3;
-  --linen: #f4eee4;
-  --ink: #1c1b19;
-  --ink-muted: #6b665e;
-  --hairline: #e7e0d4;
-  /* Input borders and other affordance strokes: ≥3:1 on paper and linen */
-  --line-strong: #8f877b;
+  /* Surfaces */
+  --bg: #fffcf7;
+  --bg-tint: #fff5e8;
+  --bg-raise: #ffffff;
 
-  /* Sun scale. 400/600 are accents only; 800 is the accessible accent for text (4.93:1 on paper) */
-  --sun-50: #fff8e6;
-  --sun-200: #ffe7a8;
-  --sun-400: #ffc857;
-  --sun-600: #e8962e;
-  --sun-800: #9a5f12;
+  /* Text */
+  --fg: #1f1b16;
+  --fg-muted: #635b50; /* 6.4:1 on --bg */
+  --fg-faint: #8a8173; /* captions only, 3.6:1, never body text */
 
-  /* Dawn and sky */
-  --dawn-rose: #f6d9cf;
-  --sky-mist: #e6eef3;
+  /* Lines */
+  --line: rgb(31 27 22 / 0.09);
+  --line-strong: rgb(31 27 22 / 0.28);
 
-  /* Status */
+  /* Sunrise */
+  --sun: #ffb938;
+  --apricot: #ff9a5a;
+  --peach: #ffd8bd;
+  --glow: #ffe9be;
+  --accent: var(--sun);
+  --accent-fg: #a35a00; /* amber for text and links: 5.1:1 on --bg */
+  --on-accent: var(--fg);
+
   --danger: #b42318;
   --success: #2f6b3e;
 
-  /* Light spill */
-  --glow: radial-gradient(closest-side, #ffffff 0%, #fff4d6 45%, transparent 100%);
-
-  /* Surfaces */
-  --lift: 0 1px 0 var(--hairline), 0 12px 32px -12px rgb(28 27 25 / 0.12);
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.106 0 0 0 0 0.098 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-
-  /* Radii */
-  --r-sm: 10px;
-  --r-md: 16px;
-  --r-card: clamp(20px, 2vw, 28px);
+  /* Layout */
+  --container: 1200px;
+  --gutter: 20px;
+  --nav-h: 64px;
+  --section-y: clamp(80px, 11vw, 144px);
+  --r-sm: 12px;
+  --r-md: 20px;
+  --r-lg: clamp(24px, 2.6vw, 36px);
   --r-pill: 999px;
 
-  /* Layout */
-  --container: 1240px;
-  --prose: 680px;
-  --gutter: 16px;
-  --nav-h: 64px;
-  --section-y: clamp(96px, 12vw, 160px);
-
-  /* Motion (mirrors lib/motion.ts). Easing curves are Tailwind theme tokens: ease-out, ease-in-out, ease-drawer */
+  /* Motion (mirrors lib/motion.ts) */
   --dur-press: 140ms;
   --dur-micro: 180ms;
   --dur-ui: 240ms;
   --dur-sheet: 360ms;
-  --dur-reveal: 560ms;
+  --dur-reveal: 700ms;
+
+  --shadow-soft: 0 1px 2px rgb(31 27 22 / 0.04), 0 12px 40px -12px rgb(160 100 30 / 0.18);
+  --shadow-lift: 0 1px 2px rgb(31 27 22 / 0.05), 0 30px 80px -24px rgb(190 110 30 / 0.28);
 }
 
-@media (min-width: 481px) {
+@media (min-width: 640px) {
   :root {
-    --gutter: 24px;
+    --gutter: 28px;
   }
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1024px) {
   :root {
-    --gutter: 40px;
+    --gutter: 48px;
     --nav-h: 72px;
   }
 }

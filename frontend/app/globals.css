@@ -12,93 +12,78 @@
 }
 
 @theme inline {
-  /* Colour */
-  --color-paper: var(--paper);
-  --color-linen: var(--linen);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-hairline: var(--hairline);
+  --color-bg: var(--bg);
+  --color-bg-tint: var(--bg-tint);
+  --color-bg-raise: var(--bg-raise);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+  --color-line: var(--line);
   --color-line-strong: var(--line-strong);
-  --color-sun-50: var(--sun-50);
-  --color-sun-200: var(--sun-200);
-  --color-sun-400: var(--sun-400);
-  --color-sun-600: var(--sun-600);
-  --color-sun-800: var(--sun-800);
-  --color-dawn-rose: var(--dawn-rose);
-  --color-sky-mist: var(--sky-mist);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-on-accent: var(--on-accent);
+  --color-sun: var(--sun);
+  --color-apricot: var(--apricot);
+  --color-peach: var(--peach);
+  --color-glow: var(--glow);
   --color-danger: var(--danger);
-  --color-success: var(--success);
 
-  /* Families (next/font variables set on <html>) */
-  --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
-  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
-  --font-display-italic: var(--font-newsreader-italic), var(--font-newsreader), ui-serif, Georgia, serif;
-  --font-deva: var(--font-tiro-deva), serif;
+  /* One family, like Google's own pages: Google Sans for headings and text. */
+  --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-google-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-google-sans-code), ui-monospace, "SFMono-Regular", monospace;
 
-  /* Fluid type scale (360 → 1440px). DESIGN.md §3.1 */
-  --text-display-xl: clamp(2.75rem, 1.55rem + 5.3vw, 6.25rem);
-  --text-display-xl--line-height: 1;
-  --text-display-xl--letter-spacing: -0.04em;
-  --text-display-l: clamp(2.25rem, 1.45rem + 3.5vw, 4.5rem);
-  --text-display-l--line-height: 1.04;
-  --text-display-l--letter-spacing: -0.035em;
-  --text-display-m: clamp(1.875rem, 1.4rem + 2.1vw, 3.25rem);
-  --text-display-m--line-height: 1.08;
-  --text-display-m--letter-spacing: -0.03em;
-  --text-heading: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
-  --text-heading--line-height: 1.2;
-  --text-heading--letter-spacing: -0.02em;
-  --text-title: 1.25rem;
+  /* Fluid type (360 → 1440px) */
+  --text-hero: clamp(2.75rem, 1.55rem + 5.2vw, 5.75rem);
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.035em;
+  --text-display: clamp(2rem, 1.35rem + 2.8vw, 3.5rem);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
   --text-title--line-height: 1.3;
-  --text-title--letter-spacing: -0.01em;
-  --text-body-l: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-title--letter-spacing: -0.015em;
+  --text-body-l: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
   --text-body-l--line-height: 1.55;
-  --text-body: 1.0625rem;
-  --text-body--line-height: 1.55;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
   --text-small: 0.9375rem;
   --text-small--line-height: 1.5;
-  --text-label: 0.75rem;
-  --text-label--line-height: 1.3;
-  --text-label--letter-spacing: 0.08em;
-  --text-numeral-xl: clamp(3.5rem, 2rem + 6.5vw, 8rem);
-  --text-numeral-xl--line-height: 0.95;
-  --text-numeral-xl--letter-spacing: -0.04em;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.4;
 
-  /* Radii */
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
-  --radius-card: var(--r-card);
+  --radius-lg: var(--r-lg);
   --radius-pill: var(--r-pill);
 
-  /* Shadows */
-  --shadow-lift: var(--lift);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
 }
 
-/* Emitted as real CSS variables too, so plain CSS can use var(--ease-out). */
 @theme {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --breakpoint-3xl: 120rem;
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    scroll-padding-top: calc(var(--nav-h) + 16px);
+    scroll-padding-top: calc(var(--nav-h) + 12px);
+    background: var(--bg);
   }
 
   body {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.55;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
     overflow-x: clip;
   }
@@ -107,8 +92,7 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 400;
-    font-optical-sizing: auto;
+    font-weight: 500;
     text-wrap: balance;
   }
 
@@ -116,24 +100,17 @@
     text-wrap: pretty;
   }
 
-  /* Emotional accent words in display type use the (lazily loaded) italic cut. */
-  :is(h1, h2, h3, .font-display) :is(em, i) {
-    font-family: var(--font-display-italic);
-    font-style: italic;
-  }
-
   ::selection {
-    background: var(--sun-200);
-    color: var(--ink);
+    background: var(--glow);
+    color: var(--fg);
   }
 
   :focus-visible {
-    outline: 2px solid var(--ink);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: 2px solid var(--accent-fg);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 
-  /* Buttons and links never show text-selection on long-press */
   button,
   [role="button"] {
     -webkit-user-select: none;
@@ -164,147 +141,46 @@
     padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
   }
 
-  .section-y {
-    padding-block: var(--section-y);
-  }
-
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-label);
-    line-height: 1.3;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--sun-800);
-  }
-
   .tabular {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Static grain for warm sections. Never animated. */
-  .grain {
-    position: relative;
-    isolation: isolate;
-  }
-  .grain::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: var(--grain);
-    background-size: 160px 160px;
-    opacity: 0.035;
-    mix-blend-mode: multiply;
-    pointer-events: none;
+  /* Small uppercase kicker above headings */
+  .kicker {
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-fg);
   }
 
-  /* Hero stage layout. Static per breakpoint; motion only drives transforms. DESIGN.md §7 */
-  .hero-stage {
-    --lamp-x: 50%;
-    --horizon-y: 56%;
-    --panel-h: clamp(180px, 30svh, 330px);
-    --panel-w: calc(var(--panel-h) * 0.75);
-    --sun-d: calc(var(--panel-h) * 0.32);
-    /* Settle scene: lamp steps aside (in panel widths) and shrinks */
-    --s5-shift-n: -0.5;
-    --s5-scale: 0.55;
-  }
-  @media (min-width: 768px) {
-    .hero-stage {
-      --s5-shift-n: -0.7;
-      --s5-scale: 0.6;
-    }
-  }
-  @media (min-width: 1024px) {
-    .hero-stage {
-      --lamp-x: 66%;
-      --horizon-y: 58%;
-      --panel-h: clamp(300px, 52svh, 600px);
-      --s5-shift-n: -0.15;
-      --s5-scale: 0.56;
-    }
+  /* The sunrise gradient, for the one highlighted word in a heading */
+  .text-sunrise {
+    background: linear-gradient(100deg, #ff8a3d 0%, #ffa53c 45%, #f2b100 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  /* Colour-temperature slider (Try the light) */
-  .kelvin-range {
-    appearance: none;
-    height: 44px;
-    background: transparent;
-    cursor: pointer;
-  }
-  .kelvin-range::-webkit-slider-runnable-track {
-    height: 10px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #ffc98a, #fff3dc 40%, #f4f7ff 60%, #cfdcf7);
-    box-shadow: inset 0 0 0 1px rgb(28 27 25 / 0.08);
-  }
-  .kelvin-range::-moz-range-track {
-    height: 10px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #ffc98a, #fff3dc 40%, #f4f7ff 60%, #cfdcf7);
-  }
-  .kelvin-range::-webkit-slider-thumb {
-    appearance: none;
-    width: 28px;
-    height: 28px;
-    margin-top: -9px;
-    border-radius: 999px;
-    background: var(--paper);
-    box-shadow:
-      0 0 0 1px rgb(28 27 25 / 0.2),
-      0 4px 12px -2px rgb(28 27 25 / 0.25);
-    transition: scale var(--dur-press) var(--ease-out);
-  }
-  .kelvin-range:active::-webkit-slider-thumb {
-    scale: 0.94;
-  }
-  .kelvin-range::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--paper);
-    box-shadow:
-      0 0 0 1px rgb(28 27 25 / 0.2),
-      0 4px 12px -2px rgb(28 27 25 / 0.25);
-  }
-  .kelvin-range:focus-visible {
-    outline: none;
-  }
-  .kelvin-range:focus-visible::-webkit-slider-thumb {
-    box-shadow:
-      0 0 0 2px var(--paper),
-      0 0 0 4px var(--ink);
-  }
-  .kelvin-range:focus-visible::-moz-range-thumb {
-    box-shadow:
-      0 0 0 2px var(--paper),
-      0 0 0 4px var(--ink);
-  }
-
-  /* Long-form content (journal, legal, inner pages) */
+  /* Legal pages (privacy, terms) */
   .prose {
     max-width: 680px;
     font-size: var(--text-body-l);
     line-height: 1.65;
-    color: var(--ink);
+    color: var(--fg);
   }
   .prose > * + * {
     margin-top: 1.1em;
   }
   .prose h2 {
     margin-top: 2.2em;
-    font-size: var(--text-heading);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    font-size: var(--text-title);
+    font-weight: 500;
   }
   .prose h3 {
     margin-top: 1.8em;
-    font-family: var(--font-sans);
-    font-size: 1.125rem;
-    font-weight: 600;
-    letter-spacing: -0.005em;
+    font-size: 1.0625rem;
+    font-weight: 500;
   }
   .prose h2 + *,
   .prose h3 + * {
@@ -312,20 +188,15 @@
   }
   .prose p,
   .prose li {
-    color: color-mix(in oklab, var(--ink) 88%, var(--paper));
+    color: color-mix(in oklab, var(--fg) 86%, var(--bg));
   }
   .prose a {
     text-decoration: underline;
-    text-decoration-color: var(--sun-600);
+    text-decoration-color: var(--sun);
     text-underline-offset: 3px;
-    transition: color var(--dur-micro) ease;
-  }
-  .prose a:hover {
-    color: var(--sun-800);
   }
   .prose strong {
     font-weight: 600;
-    color: var(--ink);
   }
   .prose ul,
   .prose ol {
@@ -340,31 +211,16 @@
   .prose li + li {
     margin-top: 0.4em;
   }
-  .prose li::marker {
-    color: var(--sun-600);
-  }
-  .prose blockquote {
-    border-left: 2px solid var(--sun-400);
-    padding-left: 1.25em;
-    font-family: var(--font-display);
-    font-size: 1.35em;
-    line-height: 1.35;
-    letter-spacing: -0.01em;
-  }
   .prose hr {
-    border-color: var(--hairline);
+    border-color: var(--line);
     margin-block: 2.5em;
-  }
-
-  .prose-measure {
-    max-width: 65ch;
   }
 }
 
-/* One-shot reveals (components/ui/Reveal.tsx) */
+/* ---------- One-shot reveals (components/ui/Reveal.tsx + RevealObserver) ---------- */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
   transition:
     opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s),
     transform var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s);
@@ -373,16 +229,58 @@
   opacity: 1;
   transform: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
-    transform: none;
-    transition: opacity var(--dur-ui) var(--ease-out);
+
+/* Chart bars grow from zero once their figure is revealed. --v is 0–1, --d a stagger delay. */
+.bar-x,
+.bar-y {
+  transition: transform 1.2s var(--ease-out) calc(0.15s + var(--d, 0s));
+}
+.bar-x {
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.bar-y {
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+[data-revealed] .bar-x {
+  transform: scaleX(var(--v));
+}
+[data-revealed] .bar-y {
+  transform: scaleY(var(--v));
+}
+.bar-label {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out) calc(0.9s + var(--d, 0s));
+}
+[data-revealed] .bar-label {
+  opacity: 1;
+}
+
+[data-hero-in] {
+  animation: hero-rise 0.9s var(--ease-out) calc(var(--hero-delay, 0.05s) + var(--i, 0) * 0.08s) both;
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 
-@keyframes marquee {
-  to {
-    transform: translateX(calc(-50% - 8px));
+/* Native <details>: animate the height where supported. */
+@supports selector(::details-content) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  details.faq::details-content {
+    height: 0;
+    overflow: hidden;
+    transition:
+      height var(--dur-sheet) var(--ease-drawer),
+      content-visibility var(--dur-sheet) allow-discrete;
+  }
+  details.faq[open]::details-content {
+    height: auto;
   }
 }
 
@@ -391,5 +289,163 @@
   *::before,
   *::after {
     scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    transform: none;
+    transition: opacity var(--dur-ui) var(--ease-out);
+  }
+  .bar-x,
+  .bar-y,
+  .bar-label {
+    transition: none;
+  }
+  [data-hero-in] {
+    animation: none;
+  }
+}
+
+/* ---------- Scenes (components/scenes) ----------
+   Each illustrated scene plays once when its card is revealed, then idles. Parts of a figure carry
+   their pose for each of five beats as custom properties (see pose.ts); one keyframe set reads them. */
+@keyframes scene {
+  0%,
+  5% {
+    rotate: var(--r0);
+    translate: 0 var(--y0);
+    opacity: var(--o0);
+  }
+  16%,
+  22% {
+    rotate: var(--r1);
+    translate: 0 var(--y1);
+    opacity: var(--o1);
+  }
+  33%,
+  45% {
+    rotate: var(--r2);
+    translate: 0 var(--y2);
+    opacity: var(--o2);
+  }
+  56%,
+  65% {
+    rotate: var(--r3);
+    translate: 0 var(--y3);
+    opacity: var(--o3);
+  }
+  77%,
+  100% {
+    rotate: var(--r4);
+    translate: 0 var(--y4);
+    opacity: var(--o4);
+  }
+}
+.scene {
+  --scene-dur: 7s;
+  --scene-delay: 0s;
+}
+/* The lamp catches at the end of the reach (22%), quickly; the room fills more slowly. */
+@keyframes scene-on {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  24.5% {
+    opacity: 1;
+  }
+}
+@keyframes scene-glow {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+}
+@keyframes scene-dim {
+  0%,
+  22% {
+    opacity: 0.62;
+  }
+  40% {
+    opacity: 0.06;
+  }
+}
+@keyframes steam {
+  from {
+    translate: 0 4px;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  to {
+    translate: 0 -14px;
+    opacity: 0;
+  }
+}
+@keyframes typing {
+  to {
+    translate: 0 -2px;
+  }
+}
+@keyframes mote {
+  to {
+    translate: -18px -26px;
+  }
+}
+/* Scenes sit on their first frame until Scene.tsx sets data-play (card well on screen); leaving the
+   screen rewinds them, so each visit plays from the start. */
+.scene .k {
+  animation: scene var(--scene-dur) cubic-bezier(0.45, 0, 0.3, 1) var(--scene-delay) both paused;
+}
+.scene .s-on {
+  animation: scene-on var(--scene-dur) linear var(--scene-delay) both paused;
+}
+.scene .s-glow {
+  animation: scene-glow var(--scene-dur) linear var(--scene-delay) both paused;
+}
+.scene .s-dim {
+  opacity: 0.06;
+  animation: scene-dim var(--scene-dur) linear var(--scene-delay) both paused;
+}
+.scene .s-type {
+  animation: typing 0.18s ease-in-out infinite alternate paused;
+  animation-delay: calc(var(--scene-delay) + var(--scene-dur) * 0.52 + var(--i, 0) * 0.09s);
+}
+.scene[data-play] :is(.k, .s-on, .s-glow, .s-dim, .s-type) {
+  animation-play-state: running;
+}
+.scene .s-steam {
+  animation: steam 2.6s ease-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.85s);
+}
+.scene .s-mote {
+  animation: mote 7s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -1.7s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene .k,
+  .scene .s-on,
+  .scene .s-glow,
+  .scene .s-dim,
+  .scene .s-steam,
+  .scene .s-type,
+  .scene .s-mote {
+    animation: none;
+  }
+}
+
+/* A line chart's curve wipes in from the left once its figure is revealed. */
+.wipe {
+  clip-path: inset(-10% 100% -10% -2%);
+  transition: clip-path 1.4s var(--ease-out) 0.2s;
+}
+[data-revealed] .wipe {
+  clip-path: inset(-10% -2% -10% -2%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wipe {
+    transition: none;
   }
 }

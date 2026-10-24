@@ -50,43 +50,35 @@ export const colourModes = [
 
 export type SpecRow = { label: string; value: string; verify: boolean };
 
-/** /the-lamp specification table. PLACEHOLDERS until final hardware. */
+/** Datasheet in the lamp section. PLACEHOLDERS until final hardware (form factor per the 2026-10-24 reference). */
 export const specRows: { group: string; rows: SpecRow[] }[] = [
   {
     group: "Light",
     rows: [
       { label: "Illuminance", value: "10,000 lux at 30 cm", verify: true },
-      { label: "UV output", value: "UV-free LEDs (filtered diffuser)", verify: true },
-      { label: "Colour temperature", value: "Warm 2700K · Neutral 4000K · Cool 6500K", verify: true },
-      { label: "Brightness", value: "5 levels", verify: true },
+      { label: "UV", value: "Filtered by the diffuser", verify: true },
+      { label: "Colour", value: "Neutral white, about 4000–5000 K", verify: true },
+      { label: "Brightness", value: "Stepless dial", verify: true },
       { label: "Flicker", value: "Flicker-free driver", verify: true },
-      { label: "Colour rendering", value: "CRI ≥ 90", verify: true },
     ],
   },
   {
-    group: "Design",
+    group: "Build",
     rows: [
-      { label: "Panel", value: "Portrait, 3:4, frosted diffuser", verify: false },
-      { label: "Size", value: "≈ 30 × 22 × 1.8 cm", verify: true },
-      { label: "Weight", value: "≈ 650 g", verify: true },
-      { label: "Stand", value: "Slim fold-out kickstand, two angles", verify: true },
-      { label: "Finish", value: "Warm white", verify: false },
+      { label: "Panel", value: "Landscape, frosted diffuser, ≈ 38 × 29 cm", verify: true },
+      { label: "Arm", value: "Brushed-aluminium gooseneck", verify: false },
+      { label: "Base", value: "Weighted, ≈ 22 × 20 cm footprint", verify: true },
+      { label: "Height", value: "≈ 55–60 cm, adjustable", verify: true },
+      { label: "Finish", value: "Gloss white", verify: false },
     ],
   },
   {
-    group: "Power & controls",
+    group: "Power & care",
     rows: [
-      { label: "Power", value: "USB-C, 5V ⎓ 3A adapter included", verify: true },
-      { label: "Timer", value: "15 / 30 / 45 / 60 min auto-off", verify: true },
-      { label: "Controls", value: "Touch buttons: power, mode, brightness, timer", verify: true },
-      { label: "Memory", value: "Remembers your last mode and level", verify: true },
-    ],
-  },
-  {
-    group: "Care",
-    rows: [
-      { label: "Warranty", value: "1 year (placeholder)", verify: true },
-      { label: "Certifications", value: "BIS registration in progress (placeholder)", verify: true },
+      { label: "Power", value: "Mains adapter included", verify: true },
+      { label: "Timer", value: "Auto-off after 30 min", verify: true },
+      { label: "Warranty", value: "Confirmed before launch", verify: true },
+      { label: "Certification", value: "BIS registration in progress", verify: true },
     ],
   },
 ];

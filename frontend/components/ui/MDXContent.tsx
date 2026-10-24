@@ -20,8 +20,8 @@ function getMDXModule(code: string): MDXModule {
 
 function Note({ children }: { children?: ReactNode }) {
   return (
-    <aside className="not-prose my-8 flex gap-3 rounded-md border border-sun-200 bg-sun-50 p-5 text-small text-ink">
-      <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-sun-800" strokeWidth={1.75} />
+    <aside className="not-prose my-8 flex gap-3 rounded-md border border-line bg-bg-raise p-5 text-small text-fg">
+      <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-accent-fg" strokeWidth={1.75} />
       <div className="[&>p+p]:mt-2">{children}</div>
     </aside>
   );

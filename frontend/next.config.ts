@@ -10,6 +10,23 @@ if (process.argv.includes("dev") && !process.env.VELITE_STARTED) {
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  // The site became one page (2026-10-24). Old routes point at the matching section so links from
+  // earlier posts, ads and search results still land somewhere useful. Temporary (307), so a page
+  // can come back later without browsers holding on to a cached permanent redirect.
+  async redirects() {
+    const to = (source: string, destination: string) => ({ source, destination, permanent: false });
+    return [
+      to("/early-access", "/#join"),
+      to("/the-lamp", "/#why"),
+      to("/how-it-works", "/#why"),
+      to("/why-india", "/#why"),
+      to("/faq", "/#faq"),
+      to("/stories", "/"),
+      to("/about", "/"),
+      to("/journal", "/#why"),
+      to("/journal/:slug*", "/#why"),
+    ];
+  },
   experimental: {
     // ~18 KB of CSS inlined into <head>: no render-blocking stylesheet request on first visit.
     inlineCss: true,

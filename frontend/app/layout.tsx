@@ -1,46 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Hanken_Grotesk, IBM_Plex_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
-import localFont from "next/font/local";
+import { Google_Sans, Google_Sans_Code } from "next/font/google";
 import { siteConfig } from "@/site.config";
 import "./globals.css";
 
-// Newsreader, self-hosted: weight 400 with the optical-size axis kept (opsz 20–72), Latin + ₹,
-// cut from Google Fonts' OFL source with fontTools: ~40 KB per style instead of ~130 KB. See app/fonts/README.md.
-const newsreader = localFont({
-  src: [{ path: "./fonts/newsreader-roman.woff2", weight: "400", style: "normal" }],
-  display: "swap",
-  variable: "--font-newsreader",
-  adjustFontFallback: "Times New Roman",
-});
-
-// Italic accent words appear in most page headings, so the (small) italic cut is preloaded too.
-const newsreaderItalic = localFont({
-  src: [{ path: "./fonts/newsreader-italic.woff2", weight: "400", style: "italic" }],
-  display: "swap",
-  variable: "--font-newsreader-italic",
-  adjustFontFallback: "Times New Roman",
-});
-
-const hanken = Hanken_Grotesk({
+// Google Sans: the typeface of Google's own products, now on Google Fonts. One family for
+// headings and text keeps the page calm; weight and size do the hierarchy.
+const googleSans = Google_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-hanken",
+  variable: "--font-google-sans",
 });
 
-const plexMono = IBM_Plex_Mono({
+// Numbers in small readouts (lux values). Not preloaded; it is used sparingly.
+const googleSansCode = Google_Sans_Code({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-  variable: "--font-plex-mono",
-});
-
-// One decorative use in the hero; not preloaded.
-const tiroDeva = Tiro_Devanagari_Hindi({
-  subsets: ["devanagari"],
-  weight: "400",
   display: "swap",
   preload: false,
-  variable: "--font-tiro-deva",
+  variable: "--font-google-sans-code",
 });
 
 export const metadata: Metadata = {
@@ -63,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fbf8f3",
+  themeColor: "#fffcf7",
   colorScheme: "light",
   viewportFit: "cover",
 };
@@ -73,12 +49,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en-IN"
       suppressHydrationWarning
-      className={`${newsreader.variable} ${newsreaderItalic.variable} ${hanken.variable} ${plexMono.variable} ${tiroDeva.variable}`}
+      className={`${googleSans.variable} ${googleSansCode.variable}`}
     >
       <head>
         {/* Without JS, revealed content must still be visible. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}.bar-x{transform:scaleX(var(--v))!important}.bar-y{transform:scaleY(var(--v))!important}.bar-label{opacity:1!important}.wipe{clip-path:none!important}.scene .k,.scene .s-on,.scene .s-glow,.scene .s-dim,.scene .s-type{animation:none!important}`}</style>
         </noscript>
       </head>
       <body className="min-h-dvh">{children}</body>

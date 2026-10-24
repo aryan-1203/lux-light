@@ -1,48 +1,32 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { Controller, useForm, type FieldPath, type Resolver } from "react-hook-form";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { siteConfig } from "@/site.config";
-import { INDIAN_STATES } from "@/data/india";
-import {
-  HEARD_FROM,
-  INTERESTS,
-  QUANTITIES,
-  STEP_ONE_FIELDS,
-  USE_LOCATIONS,
-  fullLeadSchema,
-  shortLeadSchema,
-  type FullLead,
-  type FullLeadInput,
-} from "@/lib/lead-schema";
+import { INTERESTS, shortLeadSchema, type ShortLead, type ShortLeadInput } from "@/lib/lead-schema";
 import { track } from "@/lib/analytics";
 import { captureFirstTouch } from "@/lib/utm";
-import { duration, ease, exitOf, spring } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { whatsappHref } from "@/lib/format";
-import { CheckboxField, ChipGroup, RadioCards, SelectField, TextField } from "./fields";
+import { CheckboxField, ChipGroup, TextField } from "./fields";
 import { SuccessState } from "./SuccessState";
 import { warmApi } from "@/lib/api";
 import { submitLead } from "./submitLead";
 
 const TURNSTILE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
-type Variant = "short" | "full";
-type Values = FullLeadInput;
+type Values = ShortLeadInput;
 
 /**
- * Early-access form. "full" is the two-step form on /early-access (about you → your interest);
- * "short" is the compact Home version (name, phone, city, interest). Same schema rules as the backend.
+ * Early-access form: name, mobile, city, interests, consent. Kept short on purpose; most visitors
+ * arrive from an ad on a phone. Same schema rules as the backend (lib/lead-schema.ts ↔
+ * backend/app/schemas.py) and posted as the "short" form to /api/leads, which writes the sheet.
  */
-export function LeadForm({ variant, className }: { variant: Variant; className?: string }) {
+export function LeadForm({ className }: { className?: string }) {
   const formId = useId();
-  const reduce = useReducedMotion();
-  const [step, setStep] = useState<1 | 2>(1);
   const [status, setStatus] = useState("");
   const [formError, setFormError] = useState("");
   const [success, setSuccess] = useState<{ leadId: string; name: string } | null>(null);
@@ -57,17 +41,15 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
     warmApi();
   }, []);
 
-  const schema = variant === "full" ? fullLeadSchema : shortLeadSchema;
   const {
     register,
     control,
     handleSubmit,
-    trigger,
     setError,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<Values, unknown, FullLead>({
-    resolver: zodResolver(schema) as unknown as Resolver<Values, unknown, FullLead>,
+  } = useForm<Values, unknown, ShortLead>({
+    resolver: zodResolver(shortLeadSchema) as unknown as Resolver<Values, unknown, ShortLead>,
     mode: "onTouched",
     defaultValues: { interests: [], whatsapp_opt_in: false, company: "" },
   });
@@ -75,17 +57,7 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
   const onFirstFocus = () => {
     if (started.current) return;
     started.current = true;
-    track("form_start", { form: variant });
-  };
-
-  const next = async () => {
-    const ok = await trigger([...STEP_ONE_FIELDS], { shouldFocus: true });
-    if (!ok) {
-      setStatus("Please fix the highlighted fields.");
-      return;
-    }
-    setStatus("Step 2 of 2: your interest.");
-    setStep(2);
+    track("form_start", { form: "short" });
   };
 
   const onSubmit = handleSubmit(async (values) => {
@@ -95,9 +67,9 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
       return;
     }
     setStatus("Sending…");
-    const result = await submitLead({ ...values, form: variant, turnstile_token: token || undefined });
+    const result = await submitLead({ ...values, form: "short", turnstile_token: token || undefined });
     if (result.ok) {
-      track("form_submit", { form: variant });
+      track("form_submit", { form: "short" });
       setStatus("You’re on the list.");
       setSuccess({ leadId: result.leadId, name: values.name });
       return;
@@ -107,7 +79,6 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
     if (result.kind === "fields") {
       const keys = Object.keys(result.fields) as FieldPath<Values>[];
       keys.forEach((k) => setError(k, { message: result.fields[k] }));
-      if (variant === "full" && keys.some((k) => (STEP_ONE_FIELDS as readonly string[]).includes(k))) setStep(1);
       if (keys[0]) setTimeout(() => setFocus(keys[0]), 0);
       setStatus("Please fix the highlighted fields.");
       return;
@@ -127,90 +98,6 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
     );
   }
 
-  const stepMotion = reduce
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : {
-        initial: { opacity: 0, transform: "translateX(16px)" },
-        animate: { opacity: 1, transform: "translateX(0px)" },
-        exit: {
-          opacity: 0,
-          transform: "translateX(-16px)",
-          transition: { duration: exitOf(duration.ui), ease: ease.out },
-        },
-      };
-
-  const interestsField = (
-    <Controller
-      control={control}
-      name="interests"
-      render={({ field }) => (
-        <ChipGroup
-          legend={variant === "full" ? "What interests you most?" : "What would you use it for?"}
-          options={INTERESTS}
-          value={(field.value as string[]) ?? []}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
-          error={errors.interests?.message}
-        />
-      )}
-    />
-  );
-
-  const consentFields = (
-    <div className="space-y-4">
-      <CheckboxField
-        {...register("whatsapp_opt_in")}
-        label="Send me early-access updates on WhatsApp. You can stop them any time."
-      />
-      <CheckboxField
-        {...register("consent")}
-        error={errors.consent?.message}
-        label={
-          <>
-            I agree to share these details so the team can contact me about early access.{" "}
-            <span className="text-ink-muted">
-              We collect your name, contact details, city and preferences only for this purpose, store them securely and
-              never sell them. You can ask us to delete them at any time.{" "}
-              <Link href="/privacy" className="underline decoration-sun-600 underline-offset-2 hover-fine:text-sun-800">
-                Privacy policy
-              </Link>
-              .
-            </span>
-          </>
-        }
-      />
-    </div>
-  );
-
-  const submitButton = (
-    <button
-      type="submit"
-      disabled={isSubmitting}
-      className="inline-flex h-[52px] w-full cursor-pointer items-center justify-center gap-2 rounded-pill bg-ink px-7 text-base font-semibold text-paper transition-[scale,background-color] duration-[var(--dur-press)] ease-out active:scale-[0.97] disabled:cursor-progress disabled:opacity-80 sm:w-auto hover-fine:bg-[#33312d]"
-    >
-      {isSubmitting ? (
-        <>
-          <Loader2 aria-hidden className="size-4 animate-spin" /> Sending…
-        </>
-      ) : (
-        <>
-          Join early access <ArrowRight aria-hidden className="size-4" />
-        </>
-      )}
-    </button>
-  );
-
-  const turnstile = TURNSTILE_KEY ? (
-    <Turnstile
-      key={turnstileKey}
-      siteKey={TURNSTILE_KEY}
-      onSuccess={setToken}
-      onExpire={() => setToken("")}
-      onError={() => setToken("")}
-      options={{ appearance: "interaction-only", size: "flexible", theme: "light" }}
-    />
-  ) : null;
-
   return (
     <form
       id={formId}
@@ -218,7 +105,7 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
       onFocusCapture={onFirstFocus}
       noValidate
       aria-describedby={`${formId}-status`}
-      className={cn("relative", className)}
+      className={cn("relative grid gap-6", className)}
     >
       {/* Honeypot: hidden from people, tempting to bots */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
@@ -228,182 +115,98 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
         </label>
       </div>
 
-      {variant === "full" && <StepProgress step={step} />}
-
-      {variant === "short" ? (
-        <div className="grid gap-5">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <TextField
-              label="Full name"
-              autoComplete="name"
-              placeholder="Your name"
-              {...register("name")}
-              error={errors.name?.message}
-            />
-            <TextField
-              label="Mobile number"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel-national"
-              prefix="+91"
-              placeholder="98765 43210"
-              {...register("phone")}
-              error={errors.phone?.message}
-            />
-          </div>
-          <TextField
-            label="City"
-            autoComplete="address-level2"
-            placeholder="Pune"
-            {...register("city")}
-            error={errors.city?.message}
+      <TextField
+        label="Your name"
+        autoComplete="name"
+        placeholder="Full name"
+        {...register("name")}
+        error={errors.name?.message}
+      />
+      <div className="grid gap-6 sm:grid-cols-2">
+        <TextField
+          label="Mobile number"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          prefix="+91"
+          placeholder="98765 43210"
+          {...register("phone")}
+          error={errors.phone?.message}
+        />
+        <TextField
+          label="City"
+          autoComplete="address-level2"
+          placeholder="e.g. Pune"
+          {...register("city")}
+          error={errors.city?.message}
+        />
+      </div>
+      <Controller
+        control={control}
+        name="interests"
+        render={({ field }) => (
+          <ChipGroup
+            legend="What would you like more of?"
+            options={INTERESTS}
+            value={(field.value as string[]) ?? []}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.interests?.message}
           />
-          {interestsField}
-          {consentFields}
-          {turnstile}
-          <FormError message={formError} />
-          <div>{submitButton}</div>
-        </div>
-      ) : (
-        <AnimatePresence mode="wait" initial={false}>
-          {step === 1 ? (
-            <m.fieldset
-              key="s1"
-              {...stepMotion}
-              transition={{ duration: duration.ui, ease: ease.out }}
-              className="grid gap-5"
-            >
-              <legend className="sr-only">About you</legend>
-              <TextField
-                label="Full name"
-                autoComplete="name"
-                placeholder="Your name"
-                {...register("name")}
-                error={errors.name?.message}
-              />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <TextField
-                  label="Email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  {...register("email")}
-                  error={errors.email?.message}
-                />
-                <TextField
-                  label="Mobile number"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel-national"
-                  prefix="+91"
-                  placeholder="98765 43210"
-                  hint="We’ll reply on WhatsApp if you opt in."
-                  {...register("phone")}
-                  error={errors.phone?.message}
-                />
-              </div>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <TextField
-                  label="City"
-                  autoComplete="address-level2"
-                  placeholder="Pune"
-                  {...register("city")}
-                  error={errors.city?.message}
-                />
-                <SelectField
-                  label="State"
-                  options={INDIAN_STATES}
-                  placeholder="Choose your state"
-                  {...register("state")}
-                  error={errors.state?.message}
-                />
-              </div>
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={next}
-                  className="inline-flex h-[52px] w-full cursor-pointer items-center justify-center gap-2 rounded-pill bg-ink px-7 text-base font-semibold text-paper transition-[scale,background-color] duration-[var(--dur-press)] ease-out active:scale-[0.97] sm:w-auto hover-fine:bg-[#33312d]"
-                >
-                  Continue <ArrowRight aria-hidden className="size-4" />
-                </button>
-              </div>
-            </m.fieldset>
+        )}
+      />
+      <div className="grid gap-4 border-t border-line pt-6">
+        <CheckboxField {...register("whatsapp_opt_in")} label="Send me early-access updates on WhatsApp. Stop any time." />
+        <CheckboxField
+          {...register("consent")}
+          error={errors.consent?.message}
+          label={
+            <>
+              I agree to share these details so the team can contact me about early access.{" "}
+              <span className="text-fg-muted">
+                Used only for this, stored securely, never sold. Ask us to delete them any time.{" "}
+                <Link href="/privacy" className="underline decoration-accent-fg underline-offset-2 hover-fine:text-fg">
+                  Privacy policy
+                </Link>
+                .
+              </span>
+            </>
+          }
+        />
+      </div>
+      {TURNSTILE_KEY ? (
+        <Turnstile
+          key={turnstileKey}
+          siteKey={TURNSTILE_KEY}
+          onSuccess={setToken}
+          onExpire={() => setToken("")}
+          onError={() => setToken("")}
+          options={{ appearance: "interaction-only", size: "flexible", theme: "light" }}
+        />
+      ) : null}
+      <FormError message={formError} />
+      <div className="grid gap-3">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="group/s relative inline-flex h-16 w-full cursor-pointer items-center justify-center gap-2.5 overflow-hidden rounded-pill bg-[linear-gradient(135deg,#ffc24d,#ff9a5a)] px-8 text-[1.0625rem] font-medium text-fg shadow-[0_1px_0_rgb(255_255_255/0.5)_inset,0_12px_30px_-10px_rgb(255_140_60/0.6)] transition-[scale,box-shadow] duration-[var(--dur-press)] ease-out active:scale-[0.98] disabled:cursor-progress disabled:opacity-85 hover-fine:shadow-[0_1px_0_rgb(255_255_255/0.5)_inset,0_16px_36px_-10px_rgb(255_140_60/0.75)]"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 aria-hidden className="size-4 animate-spin" /> Sending…
+            </>
           ) : (
-            <m.fieldset
-              key="s2"
-              {...stepMotion}
-              transition={{ duration: duration.ui, ease: ease.out }}
-              className="grid gap-7"
-            >
-              <legend className="sr-only">Your interest</legend>
-              {interestsField}
-              <Controller
-                control={control}
-                name="use_location"
-                render={({ field }) => (
-                  <RadioCards
-                    legend="Where would you use it?"
-                    name={field.name}
-                    options={USE_LOCATIONS}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    error={errors.use_location?.message}
-                  />
-                )}
+            <>
+              Join the waitlist
+              <ArrowRight
+                aria-hidden
+                className="size-4 transition-transform duration-[var(--dur-ui)] ease-out group-hover/s:translate-x-0.5"
               />
-              <Controller
-                control={control}
-                name="quantity"
-                render={({ field }) => (
-                  <RadioCards
-                    legend="How many?"
-                    name={field.name}
-                    options={QUANTITIES}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    error={errors.quantity?.message}
-                  />
-                )}
-              />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <SelectField
-                  label="Expected budget"
-                  options={siteConfig.budgetRanges}
-                  placeholder="Choose a range"
-                  {...register("budget")}
-                  error={errors.budget?.message}
-                />
-                <SelectField
-                  label="How did you hear about us?"
-                  options={HEARD_FROM}
-                  placeholder="Choose one"
-                  {...register("heard_from")}
-                  error={errors.heard_from?.message}
-                />
-              </div>
-              {consentFields}
-              {turnstile}
-              <FormError message={formError} />
-              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep(1);
-                    setStatus("Step 1 of 2: about you.");
-                  }}
-                  className="inline-flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-pill px-5 text-base font-semibold text-ink transition-[scale,background-color] duration-[var(--dur-press)] ease-out active:scale-[0.97] hover-fine:bg-ink/[0.05]"
-                >
-                  <ArrowLeft aria-hidden className="size-4" /> Back
-                </button>
-                {submitButton}
-              </div>
-            </m.fieldset>
+            </>
           )}
-        </AnimatePresence>
-      )}
+        </button>
+        <p className="text-center text-[0.8125rem] text-fg-muted">We’ll only contact you about the founding batch.</p>
+      </div>
 
       <p id={`${formId}-status`} role="status" aria-live="polite" className="sr-only">
         {status}
@@ -412,36 +215,10 @@ export function LeadForm({ variant, className }: { variant: Variant; className?:
   );
 }
 
-function StepProgress({ step }: { step: 1 | 2 }) {
-  return (
-    <div className="mb-8">
-      <div className="mb-3 flex items-baseline justify-between font-mono text-label tracking-[0.08em] uppercase">
-        <span className="text-ink">{step === 1 ? "About you" : "Your interest"}</span>
-        <span className="tabular text-ink-muted">Step {step} of 2</span>
-      </div>
-      <div
-        className="h-1 overflow-hidden rounded-full bg-ink/[0.08]"
-        role="progressbar"
-        aria-label="Form progress"
-        aria-valuemin={1}
-        aria-valuemax={2}
-        aria-valuenow={step}
-      >
-        <m.div
-          className="h-full origin-left rounded-full bg-[linear-gradient(90deg,var(--sun-400),var(--sun-600))]"
-          initial={false}
-          animate={{ transform: `scaleX(${step / 2})` }}
-          transition={spring.ui}
-        />
-      </div>
-    </div>
-  );
-}
-
 function FormError({ message }: { message: string }) {
   if (!message) return null;
   return (
-    <div role="alert" className="rounded-sm border border-danger/30 bg-danger/[0.04] p-4 text-small text-ink">
+    <div role="alert" className="rounded-sm border border-danger/40 bg-danger/[0.06] p-4 text-small text-fg">
       {message}{" "}
       <a
         href={whatsappHref("Hi! I tried to join early access on the website.")}
